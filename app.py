@@ -1,11 +1,24 @@
-from flask import Flask
+from flask import Flask, render_template
+from flask_sqlalchemy import SQLAlchemy
 
-app = Flask(__name__)
 
-@app.route('/')
-@app.route('/home')
-def home():
-    return "Welcome to the Home Page!"
+def create_app():
+    app = Flask(__name__)
+    app.config.from_prefixed_env()
 
-if __name__ == '__main__':
-    app.run(debug=True)
+    # Create SQLAlchemy instance
+    db = SQLAlchemy(app)
+
+    @app.route('/')
+    @app.route('/home')
+    def home():
+        return render_template('home.html')
+
+    @app.route('/signup')
+    def signup():
+        return render_template('signup.html')
+
+    @app.route('/login')
+    def login():
+        return render_template('login.html')
+    return app
