@@ -1,13 +1,13 @@
 from flask import Flask, render_template
-from flask_sqlalchemy import SQLAlchemy
+from extensions import db
 
 
 def create_app():
     app = Flask(__name__)
     app.config.from_prefixed_env()
 
-    # Create SQLAlchemy instance
-    db = SQLAlchemy(app)
+    # Initialize extensions
+    db.init_app(app)
 
     @app.route('/')
     @app.route('/home')
