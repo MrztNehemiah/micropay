@@ -6,6 +6,7 @@ from sqlalchemy.dialects.postgresql import UUID
 class User(db.Model):
     # Define the table name and columns
     __tablename__ = 'users'
+    __table_args__ = {'schema': 'users'}
     id = db.Column(db.Integer, primary_key=True)
     public_id = db.Column(UUID(as_uuid=True), default=uuid4, unique=True)  # external identifier
     firstname = db.Column(db.String(150), nullable=False)
