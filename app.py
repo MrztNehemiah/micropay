@@ -1,5 +1,5 @@
 from flask import Flask, render_template
-from extensions import db
+from extensions import db, jwt
 from auth import auth_bp
 
 
@@ -9,6 +9,7 @@ def create_app():
 
     # Initialize extensions
     db.init_app(app)
+    jwt.init_app(app)
 
     # Register blueprints
     app.register_blueprint(auth_bp, url_prefix='/auth')
