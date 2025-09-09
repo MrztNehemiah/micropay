@@ -16,6 +16,14 @@ def create_app():
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(users_bp, url_prefix='/users')
 
+    # JWT additional claims
+    @jwt.additional_claims_loader
+    def make_additional_claims(identity):
+        if identity == 'nehecodes':
+            return {'role': 'admin'}
+        return {'role': 'user'}
+    
+    # JWT error handlers
     @jwt.expired_token_loader
     def expired_token_callback(jwt_header, jwt_payload):
         return (
@@ -43,6 +51,7 @@ def create_app():
                     "error": "authorization_required"
                 }
             )),401
+    
     
     @app.route('/')
     @app.route('/home')
