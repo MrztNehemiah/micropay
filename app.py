@@ -20,7 +20,7 @@ def create_app():
     # JWT additional claims
     @jwt.additional_claims_loader
     def make_additional_claims(identity):
-        if identity == 'nehecodes':
+        if identity == 'adoba':
             return {'role': 'admin'}
         return {'role': 'user'}
     
@@ -56,7 +56,7 @@ def create_app():
     @jwt.token_in_blocklist_loader
     def token_in_blocklist_callback(jwt_header, jwt_payload):
         jti = jwt_payload['jti']
-        token = db.session.query(TokenBlocklist).filter_by(TokenBlocklist.jti==jti).scalar()
+        token = db.session.query(TokenBlocklist).filter(TokenBlocklist.jti==jti).scalar()
         return token is not None
     
     @app.route('/')
