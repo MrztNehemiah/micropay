@@ -2,6 +2,7 @@ from flask import Flask, render_template, jsonify
 from extensions import db, jwt
 from auth import auth_bp
 from users import users_bp
+from models import TokenBlocklist
 
 
 def create_app():
@@ -52,6 +53,11 @@ def create_app():
                 }
             )),401
     
+    @jwt.token_in_blocklist_loader
+    def token_in_blocklist_callback(jwt_header, jwt_payload):
+        jti = jwt_payload['jti']
+        token = db.session.query(TokenBlocklist).filter_by(TokenBlocklist.jti==jti).scalar()
+        return token is not None
     
     @app.route('/')
     @app.route('/home')
