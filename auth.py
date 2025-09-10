@@ -1,9 +1,11 @@
 from flask import Blueprint, jsonify, request
 from models import User
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt
+from models import TokenBlocklist
 
 auth_bp = Blueprint('auth', __name__)
 
+# Registers a new user
 @auth_bp.post('/signup')
 def status():
 
@@ -25,7 +27,8 @@ def status():
     new_user.save()
     
     return jsonify({"message": "User created successfully"}), 201
-        
+
+ # Logs in a user and returns access and refresh tokens       
 @auth_bp.post('/signin')
 def login_user():
     data = request.get_json()
@@ -53,3 +56,16 @@ def login_user():
 def who_am_i():
     current_user = get_jwt()
     return jsonify({"message": "Successfull", "claims": current_user}), 200
+
+# Revoke the current users token
+@auth_bp.get('/signout')
+@jwt_required(verify_type=False)
+def logout():
+    jwt = get_jwt()
+    jti = jwt['jti']
+    token_type = jwt['type']
+    token = TokenBlocklist(jti=jti)
+    
+    token.save()
+
+    return jsonify({"message": f"{token_type} successfully revoked"}), 200
