@@ -3,6 +3,7 @@ from uuid import uuid4
 # Import necessary SQLAlchemy types
 from sqlalchemy.dialects.postgresql import UUID
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime
 
 class User(db.Model):
     # Define the table name and columns
@@ -35,4 +36,18 @@ class User(db.Model):
 
     def delete(self):
         db.session.delete(self)
+        db.session.commit()
+
+class TokenBlocklist(db.Model):
+    __tablename__ = 'token_blocklist'
+    __table_args__ = {'schema': 'users'}
+    id = db.Column(db.Integer, primary_key=True)
+    jti = db.Column(db.String(36), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+
+    def __repr__(self):
+        return f'<TokenBlocklist {self.jti}>'
+    
+    def save(self):
+        db.session.add(self)
         db.session.commit()
